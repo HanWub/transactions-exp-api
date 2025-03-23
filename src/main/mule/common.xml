@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="implementation-common-transaction-api-call" doc:id="51807acb-c9fc-4028-9c42-821b2778f7dd" >
+		<logger level="INFO" doc:name="Logger" doc:id="c64a97dd-6c1f-4ece-97cc-98b2477106ba" message='#[flow.name ++ "subflow started"]' />
+		<http:request method="GET" doc:name="GET /transactions/retrieve" doc:id="ce00581b-70a9-4f68-890a-899e4bfbb746" config-ref="HTTP_Request_configuration" path="#[Mule::p('transactions.path')]" sendCorrelationId="ALWAYS" correlationId="#[correlationId]">
+			<reconnect frequency="${http.reconnection.frequency}" count="${http.reconnection.attempts}" />
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('transactions.clientSecret'),
+	"client_id" : Mule::p('transactions.clientId')
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="b8f5b6b6-0bfe-409c-a1f1-df94118fcce1" message='#[flow.name ++ "subflow completed"]' />
+	</sub-flow>
+</mule>

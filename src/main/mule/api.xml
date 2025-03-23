@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="transactions-exp-api-main">
+        <http:listener config-ref="transactions-exp-api-httpListenerConfig" path="${api.basePath}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="transactions-exp-api-config" />
+		<error-handler ref="global-error-handler" />
+    </flow>
+    <flow name="transactions-exp-api-console">
+        <http:listener config-ref="transactions-exp-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="transactions-exp-api-config" />
+    </flow>
+    <flow name="get:\transcations\search:transactions-exp-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="2935b8df-c3b9-4eca-9e2c-3a43c5aeb90e" />
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="branch" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.branch]]></ee:set-variable>
+				<ee:set-variable variableName="sourceCode" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.sourcecode]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Flow Reference to implementation-transaction-search" doc:id="e0f6bb36-e88e-4eb2-b921-c052d5ddde69" name="implementation-transaction-search"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9d87d19a-79de-4fc7-839f-233e91711e83" />
+    </flow>
+    <flow name="get:\account\(accountnumber)\transactions:transactions-exp-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="41a3a736-3712-44b5-8828-39d9c6865454" message='#[flow.name ++ "Started execution"]'/>
+		<ee:transform doc:name="Set Account Number">
+            <ee:variables>
+                <ee:set-variable variableName="accountnumber">attributes.uriParams.'accountnumber'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Flow Reference to implementation-transaction-by-account-number" doc:id="ede791a9-7507-408e-88b7-5d8c4f79943d" name="implementation-transaction-by-account-number"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5bbdc7a2-c370-4f61-9e6a-d1b75615e18d" message='#[flow.name ++ "Completed execution"]'/>
+    </flow>
+    <flow name="get:\transcations:transactions-exp-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="516a9f3c-142b-437c-b593-6d114c6d23d5" message='#[flow.name ++ "Started execution"]' />
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  success: true,
+  version: "v1",
+  correlationId: "1234",
+  timestamp: "2025-03-23T01:39:41",
+  response: [
+    {
+      "\$id": "995",
+      AccountNumber: "0000725149",
+      Id: "995",
+      IdType: 1,
+      CommentCode: 0,
+      TransferCode: 0,
+      AdjustmentCode: 0,
+      RegECode: 0,
+      RegDCheckCode: 0,
+      RegDTransferCode: 0,
+      VoidCode: 0,
+      SubActionCode: "3",
+      SequenceNumber: 80962,
+      EffectiveDate: "2021-05-07T00:00:00",
+      PostDate: "2021-05-07T00:00:00",
+      PostTime: 514,
+      PreviousAvailableBalance: 69.5,
+      UserNumber: 0,
+      UserOverride: 0,
+      SecurityLevels: 0,
+      Description: "Et mollitia occaecati velit adipisci hic autem hic incidunt enim.",
+      ActionCode: "D",
+      SourceCode: "M",
+      BalanceChange: 0,
+      InterestPenalty: 0,
+      NewBalance: 398.96,
+      FeeAmount: 0,
+      EscrowAmount: 0,
+      LastTranDate: "2021-05-07T00:00:00",
+      MaturityLoanDueDate: null,
+      Comment: "Ducimus facere fugit aut necessitatibus quos odit ut.",
+      Branch: 1,
+      ConsoleNumber: 0,
+      BatchSequence: 0,
+      SalesTaxAmount: 0,
+      ActivityDate: "2021-05-07T00:00:00",
+      BilledFeeAmount: 0,
+      ProcessorUser: 0,
+      MemberBranch: "",
+      SubSourceCode: 4,
+      ConfirmationSequence: 0,
+      MicrAccountNumber: "888800000000725149",
+      MicrRtNumber: "",
+      Recurring: 0,
+      FeeExemptCourtesyAmount: 0,
+      BalSeg001SegmentId: "",
+      BalSeg001PmtChangeDate: null,
+      InterestEffectiveDate: null,
+      BalSeg001PrevFirstPmtDate: null,
+      DraftNumber: "",
+      TracerNumber: "0000080962",
+      SubSourceDescription: "",
+      TransactionAmount: 590.13,
+      ConfirmationNumber: "0000000995"
+    }, 
+    {
+      "\$id": "996",
+      AccountNumber: "0000852854",
+      Id: "996",
+      IdType: 0,
+      CommentCode: 0,
+      TransferCode: 0,
+      AdjustmentCode: 0,
+      RegECode: 0,
+      RegDCheckCode: 0,
+      RegDTransferCode: 0,
+      VoidCode: 0,
+      SubActionCode: "2",
+      SequenceNumber: 865051,
+      EffectiveDate: "2021-04-05T00:00:00",
+      PostDate: "2021-04-05T00:00:00",
+      PostTime: 1805,
+      PreviousAvailableBalance: 518.52,
+      UserNumber: 0,
+      UserOverride: 0,
+      SecurityLevels: 0,
+      Description: "Minus exercitationem odit sit sunt aut repudiandae.",
+      ActionCode: "D",
+      SourceCode: "G",
+      BalanceChange: 0,
+      InterestPenalty: 0,
+      NewBalance: 660.82,
+      FeeAmount: 0,
+      EscrowAmount: 0,
+      LastTranDate: "2021-04-05T00:00:00",
+      MaturityLoanDueDate: null,
+      Comment: "Aut consequuntur quam sapiente maiores.",
+      Branch: 9,
+      ConsoleNumber: 0,
+      BatchSequence: 0,
+      SalesTaxAmount: 0,
+      ActivityDate: "2021-04-05T00:00:00",
+      BilledFeeAmount: 0,
+      ProcessorUser: 0,
+      MemberBranch: "",
+      SubSourceCode: 2,
+      ConfirmationSequence: 0,
+      MicrAccountNumber: "888800000000852854",
+      MicrRtNumber: "",
+      Recurring: 0,
+      FeeExemptCourtesyAmount: 0,
+      BalSeg001SegmentId: "",
+      BalSeg001PmtChangeDate: null,
+      InterestEffectiveDate: null,
+      BalSeg001PrevFirstPmtDate: null,
+      DraftNumber: "",
+      TracerNumber: "0000865051",
+      SubSourceDescription: "",
+      TransactionAmount: 213.89,
+      ConfirmationNumber: "0000000996"
+    }, 
+    {
+      "\$id": "997",
+      AccountNumber: "0000689108",
+      Id: "997",
+      IdType: 0,
+      CommentCode: 0,
+      TransferCode: 0,
+      AdjustmentCode: 0,
+      RegECode: 0,
+      RegDCheckCode: 0,
+      RegDTransferCode: 0,
+      VoidCode: 0,
+      SubActionCode: "4",
+      SequenceNumber: 993390,
+      EffectiveDate: "2022-04-29T00:00:00",
+      PostDate: "2022-04-29T00:00:00",
+      PostTime: 1619,
+      PreviousAvailableBalance: -751.06,
+      UserNumber: 0,
+      UserOverride: 0,
+      SecurityLevels: 0,
+      Description: "Repellat libero esse quam omnis maxime.",
+      ActionCode: "W",
+      SourceCode: "L",
+      BalanceChange: 0,
+      InterestPenalty: 0,
+      NewBalance: -266.13,
+      FeeAmount: 0,
+      EscrowAmount: 0,
+      LastTranDate: "2022-04-29T00:00:00",
+      MaturityLoanDueDate: null,
+      Comment: "Fuga sed aspernatur vel aliquid est neque.",
+      Branch: 632,
+      ConsoleNumber: 0,
+      BatchSequence: 0,
+      SalesTaxAmount: 0,
+      ActivityDate: "2022-04-29T00:00:00",
+      BilledFeeAmount: 0,
+      ProcessorUser: 0,
+      MemberBranch: "",
+      SubSourceCode: 3,
+      ConfirmationSequence: 0,
+      MicrAccountNumber: "888800000000689108",
+      MicrRtNumber: "",
+      Recurring: 0,
+      FeeExemptCourtesyAmount: 0,
+      BalSeg001SegmentId: "",
+      BalSeg001PmtChangeDate: null,
+      InterestEffectiveDate: null,
+      BalSeg001PrevFirstPmtDate: null,
+      DraftNumber: "",
+      TracerNumber: "0000993390",
+      SubSourceDescription: "",
+      TransactionAmount: -427.72,
+      ConfirmationNumber: "0000000997"
+    }
+  ]
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="fromDate" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.fromDate]]></ee:set-variable>
+				<ee:set-variable variableName="toDate" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.toDate]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Flow Reference to implementation-get-transaction-by-post-date-range" doc:id="a3599b35-93f5-4913-83f9-e98205932f29" name="implementation-get-transaction-by-post-date-range"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ec54f585-31d0-4c9b-8d2a-c1e57e371dc8" message='#[flow.name ++ "Completed execution"]' />
+    </flow>
+    <flow name="get:\transcations\(id):transactions-exp-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="4c34b605-0db5-4cc6-b0fa-68bacbf01c10" message='#[flow.name ++ "Started execution"]'/>
+		<ee:transform doc:name="Set  ID">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <flow-ref doc:name="Flow Reference to implementation-transaction-by-id" doc:id="d13667cc-0eb9-4168-8248-05b5970d6337" name="implementation-transaction-by-id"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f4e96785-6e2e-438e-8d45-263266ccb0f0" message='#[flow.name ++ "Completed execution"]'/>
+    </flow>
+</mule>

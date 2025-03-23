@@ -1,0 +1,17 @@
+api:
+  basePath: "/api/*"
+  id: "20264809"
+http:
+  idleTimeout: "60000"
+  responseTimeOut: "60000"
+  reconnection:
+    frequency: "3000"
+    attempts: "3"
+
+
+transactions:
+  host: "mule-nonprd.members1st.org"
+  basePath: "/account-transactions-sapi/dv/v1/api"
+  path: "/transactions/retrieve"
+  clientId: "76e2cefef8fd4d7c80369f396a8fbf1f"
+  clientSecret: "2747b201A972405697e79441Bd605C17"

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="implementation-transaction-by-id" doc:id="3a78ce6a-cff0-466d-8baf-6377663de4be" >
+		<logger level="INFO" doc:name="Logger" doc:id="0549741d-a148-4a34-b7a7-1aec6a85ed0d" message='#[flow.name ++ "subflow started"]'/>
+		<flow-ref doc:name="Flow Reference to implementation-common-transaction-api-call" doc:id="624dd777-2e0f-4858-bcd7-9d2a5cb7fdbd" name="implementation-common-transaction-api-call"/>
+		<ee:transform doc:name="Set Success Response" doc:id="07e1591d-200d-490f-8595-d65ae05d79d3" >
+			<ee:message >
+				<ee:set-payload resource="dw/payload/p-set-transaction-by-id-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="775aa09d-8bce-475a-aaff-4c4d68eeba2f" message='#[flow.name ++ "subflow completed"]'/>
+	</sub-flow>
+	<sub-flow name="implementation-transaction-by-account-number" doc:id="af314f25-6c8a-42c0-a05f-ca66ce797156" >
+		<logger level="INFO" doc:name="Logger" doc:id="2db52f33-dfc5-4c0d-ac5a-f398f6a9f82b" message='#[flow.name ++ "subflow started"]' />
+		<flow-ref doc:name="Flow Reference to implementation-common-transaction-api-call" doc:id="8c13d49c-2f58-47b9-8459-8d5d22ba6574" name="implementation-common-transaction-api-call"/>
+		<ee:transform doc:name="Set Success Response" doc:id="067324f1-4929-41d2-95a3-b3f2d184b865" >
+			<ee:message >
+				<ee:set-payload resource="dw/payload/p-set-transaction-by-account-number-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2030f849-a1d5-43bd-9af6-704f41d181ef" message='#[flow.name ++ "subflow completed"]' />
+	</sub-flow>
+	<sub-flow name="implementation-transaction-search" doc:id="d5ecf699-fb23-4a76-9010-5c62dd319dcd" >
+		<logger level="INFO" doc:name="Logger" doc:id="aed4dd15-3019-4f5b-8aa3-8966b527a5b0" message='#[flow.name ++ "subflow started"]' />
+		<flow-ref doc:name="Flow Reference to implementation-common-transaction-api-call" doc:id="145d4203-4309-416a-9db1-f21bd448eb0b" name="implementation-common-transaction-api-call" />
+		<ee:transform doc:name="Set Success Response" doc:id="55497040-5d19-4f12-a997-e04c4392fb67" >
+			<ee:message >
+				<ee:set-payload resource="dw/payload/p-set-transaction-search-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="f0004257-cccc-4bb0-99a5-ac00b08697c3" message='#[flow.name ++ "subflow completed"]' />
+	</sub-flow>
+	<sub-flow name="implementation-get-transaction-by-post-date-range" doc:id="044f3b76-fb57-4aec-a53d-df2e9116a49d" >
+		<logger level="INFO" doc:name="Logger" doc:id="299c8734-cc74-45a5-9c08-69a77c38fbaa" message='#[flow.name ++ "subflow started"]' />
+		<ee:transform doc:name="Validation Message" doc:id="8e39f0a0-1c77-4d55-b46d-7b0a2001f9f7" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="validationMessage" ><![CDATA[%dw 2.0
+output application/json
+---
+if((vars.fromDate as Date) > now()) "bad_request fromdate should be past date"
+else
+if(vars.fromDate as Date > vars.toDate as Date) "bad_request toDate should be greater than fromdate"
+else ""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<validation:is-true doc:name="Date validation" doc:id="b6cefd0b-091b-4f38-8c1a-72d30959a4b7" expression="#[isEmpty(vars.validationMessage)]" message="#[vars.validationMessage]"/>
+		<flow-ref doc:name="Flow Reference to implementation-common-transaction-api-call" doc:id="5f50f03f-bdfa-4e04-911c-348c4fe7ab31" name="implementation-common-transaction-api-call" />
+		<ee:transform doc:name="Set Success Response" doc:id="5f71d308-e390-47f6-82b5-8daf8dcdc9b1" >
+			
+			<ee:message>
+				<ee:set-payload resource="dw/payload/p-set-transaction-by-post-date-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b283164e-4dfc-46d5-b97d-5eaec837c840" message='#[flow.name ++ "subflow completed"]' />
+	</sub-flow>
+</mule>

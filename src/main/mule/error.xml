@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<error-handler name="global-error-handler" doc:id="4506a7d1-3171-466f-9662-2a0f38cfd9c8">
+	            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Set http Status" doc:id="29a4d589-f5c8-4596-a91b-6e07c995d2e8">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="a31c76a0-2ab7-4a08-88bc-c2f5a4a852c7" >
+				<ee:message >
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Set http status" doc:id="cc92682a-496c-4174-8f32-38002ebab8c4">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="f5dbb1da-3566-4ed7-9d0e-961887d9cab2" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Set http status" doc:id="e0668213-35d0-4968-9c64-d03301600227">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="3f194754-7220-424a-b719-6f58b7818b42" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Set http status" doc:id="8a86ff34-beba-4c59-85d5-f0eee4db326c">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="5db9047e-ca5f-4dba-96fd-0d41d0836319" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Set http status" doc:id="b69ec4dd-053b-4684-a2da-c61ee7e61f31">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="0663417b-7fdf-4333-ae78-186bd4b7ba3b" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Set http status" doc:id="3e424033-caba-4372-9d06-b1d81baf5b05">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="b985c43d-1704-4a77-a699-6d2d1b707686" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+<on-error-propagate type="ANY" enableNotifications="true" logException="true">
+                <ee:transform doc:name="Set http status" doc:id="b3a495e9-d001-4f9d-a0c1-dba5776b951c">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<ee:transform doc:name="Set Error Payload" doc:id="d371e446-2b02-49df-a0f3-82eda3c4bd72" >
+				
+				<ee:message>
+					
+					<ee:set-payload resource="dw/payload/p-error-response.dwl" />
+				</ee:message>
+			</ee:transform>
+            
+</on-error-propagate>
+</error-handler>
+</mule>
